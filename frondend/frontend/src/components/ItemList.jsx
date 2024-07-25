@@ -5,13 +5,21 @@ import ItemForm from './ItemForm';
 const ItemList = ({ onEdit }) => {
     const [items, setItems] = useState([]);
 
+    // filter
+    const [searchTerm,setSearchTerm]=useState('')
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchItems();
-            setItems(data);
+            try {
+                const data = await fetchItems(searchTerm);
+                setItems(Array.isArray(data) ? data : []); // Ensure items is an array
+            } catch (error) {
+                console.error("Failed to fetch items", error);
+                setItems([]); // Fallback to an empty array in case of an error
+            }
         };
         fetchData();
-    }, []);
+    }, [searchTerm]); // Add searchTerm as a dependency
+    
 
     const handleDelete = async (id) => {
         await deleteItem(id);
@@ -22,9 +30,22 @@ const ItemList = ({ onEdit }) => {
         alert(`Name: ${item.name}\nQuantity: ${item.quantity}\nPrice: $${item.price}`);
     };
 
+
+    // filter-react
+    // const filterItems=items.filter(item =>
+    //     item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    // )
+    
+
     return (
         <div>
             <h2>Item List</h2>
+            <input type='text' 
+            placeholder='Search by name'
+            value={searchTerm} 
+            onChange={(e)=>setSearchTerm(e.target.value)}
+            className='search-input'
+            ></input>
             <table className="item-table">
                 <thead>
                     <tr>
@@ -35,7 +56,11 @@ const ItemList = ({ onEdit }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map(item => (
+                {/* filter */}
+                {/* {filterItems.map(item => ( */}
+
+                {items && items.length > 0 ? (
+                    items.map(item => (
                         <tr key={item._id}>
                             <td>{item.name}</td>
                             <td>{item.quantity}</td>
@@ -46,7 +71,12 @@ const ItemList = ({ onEdit }) => {
                                 <button className="delete-button" onClick={() => handleDelete(item._id)}>Delete</button>
                             </td>
                         </tr>
-                    ))}
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="4">No items available</td>
+                    </tr>
+                )}
                 </tbody>
             </table>
         </div>

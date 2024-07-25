@@ -6,10 +6,17 @@ const createItem = async (itemData) => {
     await item.save();
     return item;
 };
+// filter
+// const getItems = async () => {
+//     return await Item.find();
+// };
 
-const getItems = async () => {
-    return await Item.find();
+const getItems = async (search) => {
+    const query = search ? { name: { $regex: search, $options: 'i' } } : {};
+    return await Item.find(query);
 };
+
+
 
 const getItemById = async (id) => {
     return await Item.findById(id);

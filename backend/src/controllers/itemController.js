@@ -9,15 +9,27 @@ const createItem = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+// filter
+// const getItems = async (req, res) => {
+//     try {
+//         const items = await itemService.getItems();
+//         res.status(200).json(items);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 const getItems = async (req, res) => {
     try {
-        const items = await itemService.getItems();
+        const { search } = req.query;
+        console.log("Search term:", search);
+        const items = await itemService.getItems(search);
         res.status(200).json(items);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching items', error: err.message });
     }
 };
+
 
 const getItemById = async (req, res) => {
     try {

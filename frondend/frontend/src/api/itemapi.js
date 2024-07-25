@@ -1,8 +1,25 @@
-const API_URL = 'http://localhost:3000/api/items';
 
-export const fetchItems = async () => {
-    const response = await fetch(API_URL);
-    return response.json();
+import axios from 'axios';
+const API_URL = 'http://localhost:3000/api/items';
+// filter
+// export const fetchItems = async () => {
+//     const response = await fetch(API_URL);
+//     return response.json();
+// };
+
+
+
+// Fetch items with search term
+export const fetchItems = async (searchTerm = '') => {
+    try {
+        const response = await axios.get(API_URL, {
+            params: { search: searchTerm, _: new Date().getTime() }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching items:", error);
+        throw error;
+    }
 };
 
 export const fetchItemById = async (id) => {
